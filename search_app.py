@@ -3,10 +3,11 @@ import config
 from elasticsearch import Elasticsearch
 from sentence_transformers import SentenceTransformer
 import streamlit as st
+from translator import TunisianTranslator
 
 
 class SearchApplication:
-    __index_name = "all_products"
+    __index_name = "french_products"
 
     def __init__(self) -> None:
         try:
@@ -26,7 +27,10 @@ class SearchApplication:
         self.model: SentenceTransformer = SentenceTransformer("all-mpnet-base-v2")
 
     def search(self, input_keyword: str):
-        vector_of_input_keyword = self.model.encode(input_keyword)
+        tunisian_translator = TunisianTranslator()
+        translated_keyword = tunisian_translator.translate(input_keyword)
+
+        vector_of_input_keyword = self.model.encode(translated_keyword)
 
         query = {
             "field": "DescriptionVector",
